@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
   workflow_dispatch:
 
@@ -33,6 +33,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - uses: actions/github-script@v4
+        with:
+          script: |
+            const approvals = await github.request('GET /repos/{context.repo.owner}/{context.repo.repo}/actions/runs/{context.runId}/approvals')
+            if(approvals.data[0].comment != 'production'){
+              core.setFailed(`Approval comment does not match expected: 'production'`);            
+                return;
+            }
       - name: Approve Deploying to production
         run: echo Production deployment approved
   deploy-to-prod:
@@ -40,5 +48,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - uses: actions/github-script@v4
+        with:
+          script: |
+            const approvals = await github.request('GET /repos/{context.repo.owner}/{context.repo.repo}/actions/runs/{context.runId}/approvals')
+            if(approvals.data[0].comment != 'production'){
+              core.setFailed(`Approval comment does not match expected: 'production'`);            
+                return;
+            }
+            if(approvals.data[0].user.login == approvals.data[1].user.login){
+              core.setFailed(`Two different approvers required for production deployment`);            
+                return;
+            }
+
       - name: Deploying to production
         run: echo Deploying to production
