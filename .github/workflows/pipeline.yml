@@ -20,25 +20,25 @@ jobs:
     environment: uat
     steps:
       - name: Approve Deploying to uat
-        run: UAT deployment approved
+        run: echo UAT deployment approved
   deploy-to-uat:
     needs: [approve-uat-deployment]
     runs-on: ubuntu-latest
     environment: uat
     steps:
       - name: Deploying to uat
-        run: Deploying to uat
+        run: echo Deploying to uat
   approve-prod-deployment:
     needs: [build]
     runs-on: ubuntu-latest
     environment: production
     steps:
       - name: Approve Deploying to production
-        run: Production deployment approved
+        run: echo Production deployment approved
   deploy-to-prod:
     needs: [approve-prod-deployment]
     runs-on: ubuntu-latest
     environment: production
     steps:
       - name: Deploying to production
-        run: Deploying to production
+        run: echo Deploying to production
