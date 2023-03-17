@@ -13,38 +13,26 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Run a one-line script
-        run: echo Hello, world!
+        run: echo Building
   approve-uat-deployment:
     needs: [build]
     runs-on: ubuntu-latest
-    environment: uat
+    environment: pre-approval
     steps:
       - name: Approve Deploying to uat
         run: echo UAT deployment approved
   deploy-to-uat:
     needs: [approve-uat-deployment]
     runs-on: ubuntu-latest
-    environment: uat
+    environment: production
     steps:
       - name: Deploying to uat
         run: echo Deploying to uat
   approve-prod-deployment:
     needs: [build]
     runs-on: ubuntu-latest
-    environment: production
+    environment: pre-approval
     steps:
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const approvals = await github.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/approvals', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId
-            })
-            if(approvals.data[0].comment != 'production'){
-              core.setFailed(`Approval comment does not match expected: 'production'`);            
-                return;
-            }
       - name: Approve Deploying to production
         run: echo Production deployment approved
   deploy-to-prod:
@@ -52,22 +40,5 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const approvals = await github.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/approvals', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId
-            })
-            if(approvals.data[0].comment != 'production'){
-              core.setFailed(`Approval comment does not match expected: 'production'`);            
-                return;
-            }
-            if(approvals.data[0].user.login == approvals.data[1].user.login){
-              core.setFailed(`Two different approvers required for production deployment`);            
-                return;
-            }
-
       - name: Deploying to production
         run: echo Deploying to production
