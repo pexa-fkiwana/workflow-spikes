@@ -14,3 +14,31 @@ jobs:
 
       - name: Run a one-line script
         run: echo Hello, world!
+  approve-uat-deployment:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: uat
+    steps:
+      - name: Approve Deploying to uat
+        run: UAT deployment approved
+  deploy-to-uat:
+    needs: [approve-uat-deployment]
+    runs-on: ubuntu-latest
+    environment: uat
+    steps:
+      - name: Deploying to uat
+        run: Deploying to uat
+  approve-prod-deployment:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Approve Deploying to production
+        run: Production deployment approved
+  deploy-to-prod:
+    needs: [approve-prod-deployment]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploying to production
+        run: Deploying to production
