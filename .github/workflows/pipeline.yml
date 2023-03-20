@@ -17,14 +17,14 @@ jobs:
   approve-uat-deployment:
     needs: [build]
     runs-on: ubuntu-latest
-    environment: pre-approval
+    environment: uat
     steps:
       - name: Approve Deploying to uat
         run: echo UAT deployment approved
   deploy-to-uat:
     needs: [approve-uat-deployment]
     runs-on: ubuntu-latest
-    environment: production
+    environment: uat
     steps:
       - name: Deploying to uat
         run: echo Deploying to uat
